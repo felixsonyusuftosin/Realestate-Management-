@@ -3,7 +3,7 @@ install pip
 install django (Check the docs)
 install postgres
 run the following on cmd
-* pip install django-user-sessions
+* pip install django-user-sessions 
 * pip install django-cors-headers
 * pip install couchdb
 * pip install django-guardian
