@@ -24,14 +24,16 @@ class identifier(models.Model):
     address = models.CharField(max_length=2000,blank=True, null=True)     
     profile_picture = models.ImageField(upload_to = 'rentrightusers/%Y/%m/%d',blank = True, null = True)
     created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(blank = True, null = True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User,related_name = "pki6+")
+    user_logs = models.ForeignKey('user_logs',blank = True, null= True)
     def __unicode__(self):
         return '%s ' %(self.first_name)
     class Meta:   
         verbose_name = 'Identifier'
 class locations(models.Model):
     identifier = models.ForeignKey(identifier,blank = True, null= True)
-    user = models.ForeignKey(User,related_name = "pki6+")
+    user = models.ForeignKey(User,related_name = "pki6+" , blank = True, null = True)
     longitude = models.DecimalField(max_digits=100,decimal_places=20, blank=True, null=True )
     latitude = models.DecimalField(max_digits=100,decimal_places=20, blank=True, null=True )
     created_at = models.DateTimeField(auto_now_add = True)
@@ -44,7 +46,7 @@ class locations(models.Model):
         verbose_name = 'Locations'
 class reviews(models.Model):
     identifier = models.ForeignKey(identifier,blank = True, null= True)
-    user = models.ForeignKey(User,related_name = "pki7+")
+    user = models.ForeignKey(User,related_name = "pki7+", blank = True, null = True)
     rating = models.IntegerField(blank=True, null=True )
     comment = models.CharField(max_length=2000,blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add = True)
@@ -54,8 +56,6 @@ class reviews(models.Model):
     class Meta:   
         verbose_name = 'Reviews'
 class user_logs(models.Model):
-    identifier = models.ForeignKey(identifier,blank = True, null= True)
-    user = models.ForeignKey(User,related_name = "pki8+")
     activity = models.CharField(max_length=2000,blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(blank = True,null = True)
@@ -65,36 +65,42 @@ class user_logs(models.Model):
         verbose_name = 'User Logs'
 class occupants(models.Model):
     identifier = models.ForeignKey(identifier,blank = True, null= True)
-    user = models.ForeignKey(User,related_name = "pki9+")
+    user = models.ForeignKey(User,related_name = "pki9+", blank = True, null = True)
     status = models.CharField(max_length =20, default = "active", blank=True, null=True) 
     properties= models.ForeignKey('properties',blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(blank = True,null = True)
+    tenancy_start = models.DateTimeField(blank = True,null = True)
+    tenancy_end  = models.DateTimeField(blank = True,null = True)
     def __unicode__(self):
         return '%s ' %(self.user.first_name)
     class Meta:   
         verbose_name = 'Occupants'
 class properties(models.Model):
     identifier = models.ForeignKey(identifier,blank = True, null= True)
-    user = models.ForeignKey(User,related_name = "pki2+")
+    manager = models.ForeignKey(User,related_name = "pki1q2+", blank = True, null = True)
+    status = models.CharField(max_length =20, default = "active", blank=True, null=True) 
+    availability= models.CharField(max_length=20,blank=True, null=True)
     description= models.CharField(max_length=2000,blank=True, null=True)
     cost = models.IntegerField(blank = True, null= True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(blank = True,null = True)
     address = models.CharField(max_length=2000,blank=True, null=True)
     state = models.CharField(max_length=2000,blank=True, null=True)
-    community = models.CharField(max_length=2000,blank=True, null=True) 
+    community = models.CharField(max_length=2000,blank=True, null=True)
+    properties_log= models.ForeignKey('properties_log',blank=True, null=True)
     def __unicode__(self):
-        return '%s ' %(self.user.first_name)
+        return '%s ' %(self.manager.first_name)
     class Meta:   
         verbose_name = 'Properties'
 class properties_log(models.Model):
-    properties= models.ForeignKey('properties',blank=True, null=True)
+    identifier = models.ForeignKey(identifier,blank = True, null= True)
+    user = models.ForeignKey(User,related_name = "pkihj2+", blank = True, null = True)
     cost = models.IntegerField(blank = True, null= True)
+    activity = models.CharField(max_length=2000,blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(blank = True,null = True)
+    event_date = models.DateTimeField(blank = True, null = True)
     def __unicode__(self):
-        return '%s ' %(self.properties.address)
+        return '%s ' %(self.activities)
     class Meta:   
         verbose_name = 'Properties Log'
         
